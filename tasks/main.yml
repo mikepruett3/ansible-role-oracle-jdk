@@ -27,7 +27,7 @@
     name: java
     path: "/usr/java/jdk-{{ java_version }}/bin/java"
     link: /usr/bin/java
-  when: install.changed
+  #when: install.changed
 
 - name: "Add JAVA_HOME to default user profile"
   template:
@@ -36,4 +36,4 @@
     owner: root
     group: root
     mode: 0644
-  when: install.changed
+  #when: install.changed

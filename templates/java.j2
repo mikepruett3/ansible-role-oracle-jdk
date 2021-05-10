@@ -1,4 +1,4 @@
 # Oracle JDK profile variables
 
 export JAVA_HOME=/usr/java/jdk-{{ java_version }}
-export LD_LIBRARY_PATH=${JAVA_HOME}/lib:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${JAVA_HOME}/lib:${JAVA_HOME}/lib/server:${LD_LIBRARY_PATH}

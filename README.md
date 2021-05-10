@@ -16,11 +16,14 @@ Available variables are listed below, along with default values ```(see defaults
 ```
 software_url: "http://www.example.org"
 package_name: "jdk-11_linux-x64_bin.rpm"
+java_version: "11"
 ```
 
 ```software_url``` **(Required)** The URL that hosts the Installer package. This should be either **http** or **https**.
 
 ```package_name``` **(Required)** The Installer package name.
+
+```java_version``` **(Required)** The version of Oracle Java Development Kit that is to be installed.
 
 Role variables can be stored with the hosts.yaml file, or in the main variables file.
 
@@ -38,6 +41,7 @@ Example Playbook
            vars:
              software_url: "http://www.example.org"
              package_name: "jdk-11_linux-x64_bin.rpm"
+             java_version: "11"
 
 License
 -------

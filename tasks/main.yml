@@ -34,7 +34,7 @@
 - name: "Add JAVA_HOME to default user profile"
   template:
     src: java.j2
-    dest: /etc/profile/java.sh
+    dest: /etc/profile.d/java.sh
     owner: root
     group: root
     mode: 0644

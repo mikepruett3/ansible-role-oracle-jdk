@@ -28,4 +28,5 @@
   alternatives:
     name: java
     path: /usr/java/default/bin/java
+    link: /usr/bin/java
   when: install.changed

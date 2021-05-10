@@ -21,8 +21,6 @@
     name: "/root/software/{{ package_name }}"
     state: present
   register: install
-  #when:
-  #  - "'jdk-*' not in ansible_facts.packages"
 
 - name: "Update alternatives to use newly installed Oracle Java Development Kit (JDK)"
   alternatives:

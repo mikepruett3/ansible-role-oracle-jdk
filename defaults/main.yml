@@ -2,3 +2,4 @@
 # defaults file for ansible-role-oracle-jdk/
 software_url: "http://www.example.org"
 package_name: "jdk-11_linux-x64_bin.rpm"
+java_version: "11"

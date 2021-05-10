@@ -27,6 +27,6 @@
 - name: "Update alternatives to use newly installed Oracle Java Development Kit (JDK)"
   alternatives:
     name: java
-    path: /usr/java/default/bin/java
+    path: "/usr/java/jdk-{{ java_version }}/bin/java"
     link: /usr/bin/java
   when: install.changed

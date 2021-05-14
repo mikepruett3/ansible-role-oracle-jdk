@@ -13,7 +13,7 @@ Role Variables
 
 Available variables are listed below, along with default values ```(see defaults/main.yml)```:
 
-```
+``` yaml
 software_url: "http://www.example.org"
 package_name: "jdk-11_linux-x64_bin.rpm"
 java_version: "11"
@@ -35,6 +35,7 @@ Oracle JDK is now licensed by Oracle, and requires a subscription for access to 
 Example Playbook
 ----------------
 
+``` yaml
     - hosts: servers
       roles:
          - role: mikepruett3.oracle-jdk
@@ -42,6 +43,7 @@ Example Playbook
              software_url: "http://www.example.org"
              package_name: "jdk-11_linux-x64_bin.rpm"
              java_version: "11"
+```
 
 License
 -------

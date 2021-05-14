@@ -5,19 +5,19 @@
   when: ansible_facts.packages is not defined
 
 - name: "Create software directory under root homedir, if it does not exist"
-  file:
+  ansible.builtin.file:
     path: "/root/software/"
     state: directory
 
 - name: "Download installer package from local repository"
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ software_url }}/{{ package_name }}"
     dest: "/root/software/{{ package_name }}"
     validate_certs: no
     mode: 0777
 
 - name: "Install Oracle Java Development Kit (JDK), if not already installed"
-  package:
+  ansible.builtin.package:
     name: "/root/software/{{ package_name }}"
     state: present
 
@@ -28,7 +28,7 @@
     link: /usr/bin/java
 
 - name: "Add JAVA_HOME to default user profile"
-  template:
+  ansible.builtin.template:
     src: java.j2
     dest: /etc/profile.d/java.sh
     owner: root

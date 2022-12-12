@@ -78,9 +78,19 @@
     group: root
     mode: 0644
 
+- name: "Get previously version of existing Java Development Kit"
+  ansible.builtin.shell: rpm -qa | grep "jdk-{{ installed_version }}""
+  ignore_errors: true
+  register: uninstall_package
+
+- name: "Set Facts about previously version of existing Java Development Kit"
+  ansible.builtin.set_fact:
+    uninstall_package: "{{ uninstall_package.stdout }}"
+  when: uninstall_package|length > 0
+
 - name: "Remove previously installed package (RHEL - yum)"
   ansible.builtin.yum:
-    name: "jdk-{{ installed_version }}-ga.x86_64"
+    name: "{{ uninstall_package }}"
     state: absent
     cacheonly: True
     disable_gpg_check: True
@@ -91,7 +101,7 @@
 
 - name: "Remove previously installed package (RHEL - dnf)"
   ansible.builtin.dnf:
-    name: "jdk-{{ installed_version }}-ga.x86_64"
+    name: "{{ uninstall_package }}"
     state: absent
     cacheonly: True
     disable_gpg_check: True
@@ -102,7 +112,7 @@
 
 - name: "Remove previously installed package (Debian)"
   ansible.builtin.apt:
-    deb: "jdk-{{ installed_version }}-ga.x86_64"
+    deb: "{{ uninstall_package }}"
     state: absent
   when:
     - ansible_facts['os_family'] == 'Debian'

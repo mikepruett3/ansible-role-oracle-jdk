@@ -79,7 +79,7 @@
     mode: 0644
 
 - name: "Get previously version of existing Java Development Kit"
-  ansible.builtin.shell: rpm -qa | grep "jdk-{{ installed_version }}""
+  ansible.builtin.shell: rpm -qa | grep "jdk-{{ installed_version }}"
   ignore_errors: true
   register: uninstall_package
 

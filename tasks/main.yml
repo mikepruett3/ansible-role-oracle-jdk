@@ -60,8 +60,7 @@
   when:
     - ansible_facts['os_family'] == 'RedHat'
     - ansible_facts['distribution_major_version'] >= '8'
-    - installed_version == ""
-    - installed_version != java_version
+    - (installed_version != java_version) or (installed_version|length == 0)
 
 - name: "Install package (Debian)"
   ansible.builtin.apt:
@@ -87,11 +86,11 @@
     group: root
     mode: 0644
 
-- name: "Get all installed versions of Java Development Kit"
-  ansible.builtin.command: rpm -qa | grep jdk-11
-  register: versions
-  when: installed_version != java_version
+#- name: "Get all installed versions of Java Development Kit"
+#  ansible.builtin.command: rpm -qa | grep jdk-11
+#  register: versions
+#  when: installed_version != java_version
 
-- name: "Display"
-  debug:
-    var: versions
+#- name: "Display"
+#  debug:
+#    var: versions

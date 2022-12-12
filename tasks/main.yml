@@ -24,13 +24,14 @@
 
 - name: "Get installed version of existing Java Development Kit"
   ansible.builtin.command: java --version | head -n1 | awk '{ print $2}'
+  ignore_errors: true
   register: installed_version
 
 - name: "Set Facts about existing installation"
   ansible.builtin.set_fact:
     #installed_version: "{{ ansible_facts.packages['jdk-11*'][0].version }}"
     installed_version: "{{ installed_version }}"
-  #ignore_errors: true
+  ignore_errors: true
   #when: "'jdk-11*' in ansible_facts.packages"
 
 - name: "Install package (RHEL - yum)"

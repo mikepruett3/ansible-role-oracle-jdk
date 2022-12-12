@@ -6,26 +6,62 @@
 
 - name: "Create software directory under root homedir, if it does not exist"
   ansible.builtin.file:
-    path: "/root/software/"
+    path: "/root/software/java/"
     state: directory
+
+- name: "Check if installer package already exist"
+  ansible.builtin.stat:
+    path: "/root/software/java/{{ package_name }}"
+  register: package
 
 - name: "Download installer package from local repository"
   ansible.builtin.get_url:
     url: "{{ software_url }}/{{ package_name }}"
-    dest: "/root/software/{{ package_name }}"
+    dest: "/root/software/java/"
     validate_certs: no
-    mode: 0777
+    mode: 0774
+  when: package.stat.exists != True
 
-- name: "Install Oracle Java Development Kit (JDK), if not already installed"
-  ansible.builtin.package:
-    name: "/root/software/{{ package_name }}"
+- name: "Set Facts about existing installation"
+  ansible.builtin.set_fact:
+    installed_version: "{{ ansible_facts.packages['jdk-11'][0].version }}"
+    upgrade: True
+  when: "'jdk-11' in ansible_facts.packages"
+
+- name: "Install package (RHEL - yum)"
+  ansible.builtin.yum:
+    name: "/root/software/java/{{ package_name }}"
     state: present
+  when:
+    - ansible_facts['os_family'] == 'RedHat'
+    - ansible_facts['distribution_major_version'] <= '7'
+    - ('"jdk-11" not in ansible_facts.packages') or (upgrade == True)
 
-- name: "Update alternatives to use newly installed Oracle Java Development Kit (JDK)"
-  alternatives:
-    name: java
-    path: "/usr/java/jdk-{{ java_version }}/bin/java"
-    link: /usr/bin/java
+- name: "Install package (RHEL - dnf)"
+  ansible.builtin.dnf:
+    name: "/root/software/java/{{ package_name }}"
+    state: present
+    cache_only: True
+    disable_gpg_check: yes
+  when:
+    - ansible_facts['os_family'] == 'RedHat'
+    - ansible_facts['distribution_major_version'] >= '8'
+    - ('"jdk-11" not in ansible_facts.packages') or (upgrade == True)
+
+- name: "Install package (Debian)"
+  ansible.builtin.apt:
+    deb: "/root/software/java/{{ package_name }}"
+    state: present
+  when:
+    - ansible_facts['os_family'] == 'Debian'
+    - ('"jdk-11" not in ansible_facts.packages') or (upgrade == True)
+
+#- name: "Update alternatives to use newly installed Oracle Java Development Kit (JDK)"
+#  community.general.alternatives:
+#    name: java
+#    path: "/usr/java/jdk-{{ java_version }}/bin/java"
+#    link: /usr/bin/java
+#    state: auto
 
 - name: "Add JAVA_HOME to default user profile"
   ansible.builtin.template:

@@ -26,17 +26,14 @@
   ansible.builtin.shell: java --version | head -n1 | awk '{ print $2 }'
   #ignore_errors: true
   register: installed_version
-
-- name: "Display"
-  debug:
-    var: installed_version.stdout
+  when: "'jdk' in ansible_facts.packages"
 
 - name: "Set Facts about existing installation"
   ansible.builtin.set_fact:
     #installed_version: "{{ ansible_facts.packages['jdk-11*'][0].version }}"
     installed_version: "{{ installed_version.stdout }}"
   #ignore_errors: true
-  #when: "'jdk-11*' in ansible_facts.packages"
+  when: "'jdk-11*' in ansible_facts.packages"
 
 - name: "Display"
   debug:

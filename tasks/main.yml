@@ -1,8 +1,8 @@
 ---
-- name: "Gather the package facts"
-  ansible.builtin.package_facts:
-    manager: auto
-  when: ansible_facts.packages is not defined
+#- name: "Gather the package facts"
+#  ansible.builtin.package_facts:
+#    manager: auto
+#  when: ansible_facts.packages is not defined
 
 - name: "Create software directory under root homedir, if it does not exist"
   ansible.builtin.file:
@@ -24,16 +24,16 @@
 
 - name: "Get installed version of existing Java Development Kit"
   ansible.builtin.shell: java --version | head -n1 | awk '{ print $2 }'
-  #ignore_errors: true
+  ignore_errors: true
   register: installed_version
-  when: ansible_facts['packages'].find("jdk-11") == 0
+  #when: ansible_facts['packages'].find("jdk-11") == 0
 
 - name: "Set Facts about existing installation"
   ansible.builtin.set_fact:
     #installed_version: "{{ ansible_facts.packages['jdk-11*'][0].version }}"
     installed_version: "{{ installed_version.stdout }}"
-  #ignore_errors: true
-  when: "'jdk-11*' in ansible_facts.packages"
+  ignore_errors: true
+  #when: "'jdk-11*' in ansible_facts.packages"
 
 - name: "Display"
   debug:
@@ -51,17 +51,17 @@
     - ('"jdk-11" not in ansible_facts.packages')
     - installed_version != java_version
 
-#- name: "Install package (RHEL - dnf)"
-#  ansible.builtin.dnf:
-#    name: "/root/software/java/{{ package_name }}"
-#    state: present
-#    cacheonly: True
-#    disable_gpg_check: True
-#  when:
-#    - ansible_facts['os_family'] == 'RedHat'
-#    - ansible_facts['distribution_major_version'] >= '8'
-#    - ('"jdk-11" not in ansible_facts.packages')
-#    - installed_version != java_version
+- name: "Install package (RHEL - dnf)"
+  ansible.builtin.dnf:
+    name: "/root/software/java/{{ package_name }}"
+    state: present
+    cacheonly: True
+    disable_gpg_check: True
+  when:
+    - ansible_facts['os_family'] == 'RedHat'
+    - ansible_facts['distribution_major_version'] >= '8'
+    - installed_version == ""
+    - installed_version != java_version
 
 - name: "Install package (Debian)"
   ansible.builtin.apt:

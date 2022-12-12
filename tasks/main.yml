@@ -25,7 +25,7 @@
 - name: "Set Facts about existing installation"
   ansible.builtin.set_fact:
     installed_version: "{{ ansible_facts.packages['jdk-11'][0].version }}"
-    upgrade: True
+    #upgrade: True
   when: '"jdk-11" in ansible_facts.packages'
 
 - name: "Install package (RHEL - yum)"
@@ -37,7 +37,8 @@
   when:
     - ansible_facts['os_family'] == 'RedHat'
     - ansible_facts['distribution_major_version'] <= '7'
-    - ('"jdk-11" not in ansible_facts.packages') or (upgrade == True)
+    - ('"jdk-11" not in ansible_facts.packages')
+    - installed_version != java_version
 
 - name: "Install package (RHEL - dnf)"
   ansible.builtin.dnf:
@@ -48,7 +49,8 @@
   when:
     - ansible_facts['os_family'] == 'RedHat'
     - ansible_facts['distribution_major_version'] >= '8'
-    - ('"jdk-11" not in ansible_facts.packages') or (upgrade == True)
+    - ('"jdk-11" not in ansible_facts.packages')
+    - installed_version != java_version
 
 - name: "Install package (Debian)"
   ansible.builtin.apt:
@@ -56,7 +58,8 @@
     state: present
   when:
     - ansible_facts['os_family'] == 'Debian'
-    - ('"jdk-11" not in ansible_facts.packages') or (upgrade == True)
+    - ('"jdk-11" not in ansible_facts.packages')
+    - installed_version != java_version
 
 #- name: "Update alternatives to use newly installed Oracle Java Development Kit (JDK)"
 #  community.general.alternatives:

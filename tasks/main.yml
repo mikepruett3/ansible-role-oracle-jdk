@@ -32,6 +32,8 @@
   ansible.builtin.yum:
     name: "/root/software/java/{{ package_name }}"
     state: present
+    cacheonly: True
+    disable_gpg_check: True
   when:
     - ansible_facts['os_family'] == 'RedHat'
     - ansible_facts['distribution_major_version'] <= '7'
@@ -42,7 +44,7 @@
     name: "/root/software/java/{{ package_name }}"
     state: present
     cacheonly: True
-    disable_gpg_check: yes
+    disable_gpg_check: True
   when:
     - ansible_facts['os_family'] == 'RedHat'
     - ansible_facts['distribution_major_version'] >= '8'
@@ -70,3 +72,4 @@
     owner: root
     group: root
     mode: 0644
+

@@ -76,3 +76,11 @@
     group: root
     mode: 0644
 
+- name: "Get all installed versions of Java Development Kit"
+  ansible.builtin.command: rpm -qa | grep jdk-11
+  register: versions
+  when: installed_version != java_version
+
+- name: "Display"
+  debug:
+    var: versions

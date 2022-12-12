@@ -41,7 +41,7 @@
   ansible.builtin.dnf:
     name: "/root/software/java/{{ package_name }}"
     state: present
-    cache_only: True
+    cacheonly: True
     disable_gpg_check: yes
   when:
     - ansible_facts['os_family'] == 'RedHat'

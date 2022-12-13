@@ -31,7 +31,8 @@
   ansible.builtin.set_fact:
     #installed_version: "{{ ansible_facts.packages['jdk-11*'][0].version }}"
     installed_version: "{{ installed_version.stdout }}"
-  when: installed_version|length > 0
+    existing: true
+  when: installed_version.stdout|length != 0
 
 - name: "Install package (RHEL - yum)"
   ansible.builtin.yum:
@@ -82,6 +83,7 @@
   ansible.builtin.shell: rpm -qa | grep "jdk-{{ installed_version }}"
   ignore_errors: true
   register: uninstall_package
+  when: installed_version|length != 0
 
 - name: "Set Facts about previously version of existing Java Development Kit"
   ansible.builtin.set_fact:
@@ -97,7 +99,7 @@
   when:
     - ansible_facts['os_family'] == 'RedHat'
     - ansible_facts['distribution_major_version'] <= '7'
-    - installed_version != java_version
+    - e
 
 - name: "Remove previously installed package (RHEL - dnf)"
   ansible.builtin.dnf:

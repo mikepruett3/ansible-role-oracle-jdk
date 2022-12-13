@@ -31,7 +31,7 @@
   ansible.builtin.set_fact:
     #installed_version: "{{ ansible_facts.packages['jdk-11*'][0].version }}"
     installed_version: "{{ installed_version.stdout }}"
-    existing: true
+    uninstall: true
   when: installed_version.stdout|length != 0
 
 - name: "Install package (RHEL - yum)"
@@ -54,7 +54,7 @@
   when:
     - ansible_facts['os_family'] == 'RedHat'
     - ansible_facts['distribution_major_version'] >= '8'
-    - (installed_version != java_version) or (installed_version|length == 0)
+    - (installed_version != java_version) or (installed_version is not defined)
 
 - name: "Install package (Debian)"
   ansible.builtin.apt:
@@ -83,7 +83,8 @@
   ansible.builtin.shell: rpm -qa | grep "jdk-{{ installed_version }}"
   ignore_errors: true
   register: uninstall_package
-  when: installed_version|length != 0
+  #when: installed_version|length != 0
+  when: uninstall
 
 - name: "Set Facts about previously version of existing Java Development Kit"
   ansible.builtin.set_fact:
@@ -97,9 +98,9 @@
     cacheonly: True
     disable_gpg_check: True
   when:
+    - uninstall
     - ansible_facts['os_family'] == 'RedHat'
     - ansible_facts['distribution_major_version'] <= '7'
-    - e
 
 - name: "Remove previously installed package (RHEL - dnf)"
   ansible.builtin.dnf:
@@ -108,14 +109,14 @@
     cacheonly: True
     disable_gpg_check: True
   when:
+    - uninstall
     - ansible_facts['os_family'] == 'RedHat'
     - ansible_facts['distribution_major_version'] >= '8'
-    - installed_version != java_version
 
 - name: "Remove previously installed package (Debian)"
   ansible.builtin.apt:
     deb: "{{ uninstall_package }}"
     state: absent
   when:
+    - uninstall
     - ansible_facts['os_family'] == 'Debian'
-    - installed_version != java_version
